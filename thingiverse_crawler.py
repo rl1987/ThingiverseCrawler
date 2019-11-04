@@ -161,10 +161,11 @@ def crawl_things(N, output_dir, term=None, category=None, source=None, organize=
             save_records(records, key)
 
 def get_thing(thing_id):
-    base_url = "http://www.thingiverse.com/{}:{}"
+    base_url = "http://www.thingiverse.com/{}:{}/files"
     file_ids = []
 
     url = base_url.format("thing", thing_id)
+    print(url)
     contents = get_url(url).text
     license = parse_license(contents)
     return license, parse_file_ids(contents)
