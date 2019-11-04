@@ -4,6 +4,7 @@ import thingiverse_crawler
 import tkinter as tk
 from tkinter.filedialog import askdirectory
 from tkinter import messagebox
+import os
 
 class CrawlerGUI():
     def __init__(self, master):
@@ -25,7 +26,7 @@ class CrawlerGUI():
         self.out_dir_entry = tk.Entry(self.left_frame)
         self.out_dir_entry.pack()
 
-        self.dir_button = tk.Button(self.left_frame, text="Choose dir...")
+        self.dir_button = tk.Button(self.left_frame, text="Choose dir...", command=self.choose_dir_pressed)
         self.dir_button.pack()
 
         self.right_frame = tk.Frame(self.master)
@@ -33,6 +34,13 @@ class CrawlerGUI():
 
         self.start_button = tk.Button(self.right_frame, text="Start")
         self.start_button.pack()
+
+    def choose_dir_pressed(self):
+        out_dir = askdirectory(initialdir=os.getcwd())
+
+        self.out_dir_entry.delete(0, tk.END)
+        self.out_dir_entry.insert(0, out_dir)
+
 
 root = tk.Tk()
 gui = CrawlerGUI(root)
