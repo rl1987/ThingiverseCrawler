@@ -100,6 +100,12 @@ def crawl_thing_ids(N, end_date=None):
 
     return thing_ids
 
+def crawl_collection(user, collection, output_dir):
+    url_prefix = "https://www.thingiverse.com/{}/collections/{}/".format(user, collection)
+    baseurl = url_prefix + "page:{}"
+
+    return crawl_things_internal(None, output_dir, baseurl, None)
+
 def crawl_things(N, output_dir, term=None, category=None, source=None, organize=False):
     #baseurl = "http://www.thingiverse.com/newest/page:{}"
     #baseurl = "http://www.thingiverse.com/explore/popular/page:{}"
@@ -118,6 +124,9 @@ def crawl_things(N, output_dir, term=None, category=None, source=None, organize=
         baseurl = "http://www.thingiverse.com/search/page:{}?type=things&q=" + urllib.parse.quote_plus(term)
         key = term
 
+    return crawl_things_internal(N, output_dir, baseurl, key, organize)
+
+def crawl_things_internal(N, output_dir, baseurl, key, organize=False):
     thing_ids = set()
     file_ids = set()
     records = []
@@ -210,7 +219,11 @@ def download_file(file_id, thing_id, output_dir, organize):
         output_file = os.path.join(str(thing_id), output_file)
     output_file = os.path.join(output_dir, output_file)
     command = "wget -q --tries=20 --waitretry 20 -O {} {}".format(output_file, link)
-    #check_call(command.split())
+
+    if output_dir is not None:
+        print(command)
+        check_call(command.split())
+
     return output_file, link
 
 def save_records(records, key=None):
@@ -230,6 +243,10 @@ def parse_args():
             default=".")
     parser.add_argument("--number", "-n", type=int,
             help="how many files to crawl", default=None)
+    parser.add_argument("--user", "-u", type=str,
+            help="user that owns collection (only for use with --collection)", default=None)
+    parser.add_argument("--collection", "-cl", type=str,
+            help="collection name", default=None)
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--search-term", "-s", type=str, default=None,
             help="term to search for")
@@ -246,19 +263,23 @@ def main():
     parser = parse_args()
     args = parser.parse_args()
 
-    if args.number is None and (args.search_term is None and args.category is None):
-        parser.error('Number or Search/Category Term required')
+    if args.number is None and (args.search_term is None and args.category is None and args.user is None and args.collection):
+        parser.error('Number OR Search/Category Term OR User+Collection required')
 
     output_dir = args.output_dir
     number = args.number
+    
+    if args.user is not None and args.collection is not None:
+        records = crawl_collection(args.user, args.collection, output_dir)
+    else:
+        records = crawl_things(
+                args.number,
+                output_dir,
+                args.search_term,
+                args.category,
+                args.source,
+                args.organized)
 
-    records = crawl_things(
-            args.number,
-            output_dir,
-            args.search_term,
-            args.category,
-            args.source,
-            args.organized)
     if args.search_term:
         save_records(records, args.search_term)
     elif args.category:
