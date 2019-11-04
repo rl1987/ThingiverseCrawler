@@ -23,7 +23,7 @@ def download_single_file(entry):
             if exc.errno != errno.EEXIST:
                 raise
     while r is None or r.status_code != 200:
-        print("Downloading {}".format(output_file));
+        print(("Downloading {}".format(output_file)));
         r = requests.get(link, stream=True);
         if r.status_code == 200:
             with open(output_file, 'wb') as fout:
@@ -34,7 +34,7 @@ def download_single_file(entry):
             time.sleep(sleep_time);
             sleep_time += 2.0;
             if sleep_time > 600:
-                print("cannot download {}".format(link));
+                print(("cannot download {}".format(link)));
                 break;
 
 def parse_args():

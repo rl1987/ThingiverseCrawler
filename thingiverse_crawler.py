@@ -7,8 +7,8 @@ import os.path
 import requests
 import re
 import time
-import urllib
-import urlparse
+import urllib.request, urllib.parse, urllib.error
+import urllib.parse
 from subprocess import check_call
 
 def utc_mktime(utc_tuple):
@@ -112,10 +112,10 @@ def crawl_things(N, output_dir, term=None, category=None, source=None, organize=
         if category is None:
             baseurl = url_prefix + "page:{}"
         else:
-            baseurl = url_prefix + urllib.quote_plus(category) + "/page:{}"
+            baseurl = url_prefix + urllib.parse.quote_plus(category) + "/page:{}"
             key = category
     else:
-        baseurl = "http://www.thingiverse.com/search/page:{}?type=things&q=" + urllib.quote_plus(term)
+        baseurl = "http://www.thingiverse.com/search/page:{}?type=things&q=" + urllib.parse.quote_plus(term)
         key = term
 
     thing_ids = set()
@@ -131,7 +131,7 @@ def crawl_things(N, output_dir, term=None, category=None, source=None, organize=
         page += 1
 
         # If the previous url ends up being the same as the old one, we should stop as there are no more pages
-        current_path = urlparse.urlparse(contents.url).path
+        current_path = urllib.parse.urlparse(contents.url).path
         if previous_path == current_path:
             return records
         else:
@@ -140,14 +140,14 @@ def crawl_things(N, output_dir, term=None, category=None, source=None, organize=
         for thing_id in parse_thing_ids(contents.text):
             if thing_id in thing_ids:
                 continue
-            print("thing id: {}".format(thing_id))
+            print(("thing id: {}".format(thing_id)))
             thing_ids.add(thing_id)
             license, thing_files = get_thing(thing_id)
             for file_id in thing_files:
                 if file_id in file_ids:
                     continue
                 file_ids.add(file_id)
-                print("  file id: {}".format(file_id))
+                print(("  file id: {}".format(file_id)))
                 result = download_file(file_id, thing_id, output_dir, organize)
                 if result is None: continue
                 filename, link = result
@@ -173,7 +173,7 @@ def get_url(url, time_out=600):
     r = requests.get(url)
     sleep_time = 1.0
     while r.status_code != 200:
-        print("sleep {}s".format(sleep_time))
+        print(("sleep {}s".format(sleep_time)))
         print(url)
         time.sleep(sleep_time)
         r = requests.get(url)
@@ -183,7 +183,7 @@ def get_url(url, time_out=600):
             # not exist.
             break
     if r.status_code != 200:
-        print("failed to retrieve {}".format(url))
+        print(("failed to retrieve {}".format(url)))
     else:
         return r
         # return r.text

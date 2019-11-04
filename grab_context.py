@@ -49,7 +49,7 @@ def grab_context(thing_ids):
     while len(thing_ids) > 0 and num_tries < 3:
         missing = [];
         for thing_id in thing_ids:
-            print("Thing id: {}".format(thing_id));
+            print(("Thing id: {}".format(thing_id)));
             url = "http://www.thingiverse.com/thing:{}".format(thing_id);
             contents = get_url(url, 30 + 10 * num_tries);
             if contents is None:
@@ -60,11 +60,11 @@ def grab_context(thing_ids):
             tags = extract_tags(contents.text);
             title, author = extract_title_and_author(contents.text);
 
-            print("Published time: {}".format(publish_time.isoformat()));
-            print("Category      : {}".format(category));
-            print("Tags          : {}".format(tags));
-            print("Title         : {}".format(title));
-            print("Author        : {}".format(author));
+            print(("Published time: {}".format(publish_time.isoformat())));
+            print(("Category      : {}".format(category)));
+            print(("Tags          : {}".format(tags)));
+            print(("Title         : {}".format(title)));
+            print(("Author        : {}".format(author)));
             contexts.append((
                 thing_id, publish_time, category, tags, title, author));
         thing_ids = missing;
