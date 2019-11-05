@@ -126,7 +126,7 @@ def crawl_things(N, output_dir, term=None, category=None, source=None, organize=
 
     return crawl_things_internal(N, output_dir, baseurl, key, organize)
 
-def crawl_things_internal(N, output_dir, baseurl, key, organize=False):
+def crawl_things_internal(N, output_dir, baseurl, key, organize=False, download_zip=False):
     thing_ids = set()
     file_ids = set()
     records = []
@@ -147,6 +147,10 @@ def crawl_things_internal(N, output_dir, baseurl, key, organize=False):
             previous_path = current_path
 
         for thing_id in parse_thing_ids(contents.text):
+            if download_zip:
+                download_zip_file(thing_id, output_dir)
+                continue
+
             if thing_id in thing_ids:
                 continue
             print(("thing id: {}".format(thing_id)))
@@ -225,6 +229,20 @@ def download_file(file_id, thing_id, output_dir, organize):
         check_call(command.split())
 
     return output_file, link
+
+def download_zip_file(thing_id, output_dir):
+    url = "https://www.thingiverse.com/thing:{}/zip".format(thing_id)
+
+    print(url)
+    out_filepath = os.path.join(output_dir, "{}.zip".format(thing_id))
+    print(out_filepath)
+
+    r = requests.get(url, stream=True)
+    if r.status_code == 200:
+        with open(out_filepath, "wb+") as out_f:
+            for chunk in r.iter_content(chunk_size=1024):
+                if chunk:
+                    out_f.write(chunk)
 
 def save_records(records, key=None):
     # Enforce kebab case file name

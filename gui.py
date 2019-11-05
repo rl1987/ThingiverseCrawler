@@ -58,7 +58,7 @@ class CrawlerGUI():
         return True
 
     def start_crawling(self, out_dir, url):
-        crawler.crawl_things_internal(None, out_dir, url, None)
+        crawler.crawl_things_internal(None, out_dir, url, None, download_zip=True)
         self.crawling = False
 
     def start_button_pressed(self):
