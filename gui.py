@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import thingiverse_crawler
+import thingiverse_crawler as crawler
 import tkinter as tk
 from tkinter.filedialog import askdirectory
 from tkinter import messagebox
@@ -32,7 +32,7 @@ class CrawlerGUI():
         self.right_frame = tk.Frame(self.master)
         self.right_frame.pack(side=tk.RIGHT)
 
-        self.start_button = tk.Button(self.right_frame, text="Start")
+        self.start_button = tk.Button(self.right_frame, text="Start", command=self.start_button_pressed)
         self.start_button.pack()
 
     def choose_dir_pressed(self):
@@ -41,6 +41,15 @@ class CrawlerGUI():
         self.out_dir_entry.delete(0, tk.END)
         self.out_dir_entry.insert(0, out_dir)
 
+    def start_button_pressed(self):
+        # TODO: validate
+        out_dir = self.out_dir_entry.get()
+
+        url = self.url_entry.get()
+
+        url += "/page:{}"
+
+        crawler.crawl_things_internal(None, out_dir, url, None)
 
 root = tk.Tk()
 gui = CrawlerGUI(root)
