@@ -5,6 +5,8 @@ import tkinter as tk
 from tkinter.filedialog import askdirectory
 from tkinter import messagebox
 import os
+import threading
+import time
 
 class CrawlerGUI():
     def __init__(self, master):
@@ -35,7 +37,12 @@ class CrawlerGUI():
         self.start_button = tk.Button(self.right_frame, text="Start", command=self.start_button_pressed)
         self.start_button.pack()
 
+        self.crawling = False
+
     def choose_dir_pressed(self):
+        if self.crawling:
+            return
+
         out_dir = askdirectory(initialdir=os.getcwd())
 
         self.out_dir_entry.delete(0, tk.END)
@@ -50,7 +57,14 @@ class CrawlerGUI():
 
         return True
 
+    def start_crawling(self, out_dir, url):
+        crawler.crawl_things_internal(None, out_dir, url, None)
+        self.crawling = False
+
     def start_button_pressed(self):
+        if self.crawling:
+            return
+        
         out_dir = self.out_dir_entry.get()
 
         if out_dir is None or len(out_dir) == 0:
@@ -65,9 +79,30 @@ class CrawlerGUI():
 
         url += "/page:{}"
 
-        print(url)
+        t = threading.Thread(target=self.start_crawling, args=(out_dir, url, ), daemon=True)
+        t.start()
 
-        crawler.crawl_things_internal(None, out_dir, url, None)
+        print("!!!")
+
+        self.crawling = True
+
+        x = 0
+
+        while self.crawling:
+            time.sleep(0.5)
+            
+            x = (x + 1) % 4
+
+            header = "Crawling"
+
+            for _ in range(x):
+                header += "."
+
+            self.master.title(header)
+            self.master.update()
+            
+        self.master.title("ThingInverse crawler")
+        self.master.update()
 
 root = tk.Tk()
 gui = CrawlerGUI(root)
