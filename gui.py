@@ -143,8 +143,6 @@ class CrawlerGUI():
         t = threading.Thread(target=self.start_crawling, args=(out_dir, url, ), daemon=True)
         t.start()
 
-        print("!!!")
-
         self.crawling = True
 
         x = 0
