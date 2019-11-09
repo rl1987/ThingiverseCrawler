@@ -135,6 +135,9 @@ class CrawlerGUI():
         self.left_frame = tk.Frame(self.master)
         self.left_frame.pack(side=tk.LEFT)
 
+        self.about_button = tk.Button(self.left_frame, text="About", command=self.about_pressed)
+        self.about_button.pack()
+
         self.url_label = tk.Label(self.left_frame, text="URL:")
         self.url_label.pack()
 
@@ -165,6 +168,9 @@ class CrawlerGUI():
         _ = CreateToolTip(self.start_button, "Start crawling ThingInverse pages")
 
         self.crawling = False
+
+    def about_pressed(self):
+        messagebox.showinfo("About", "ThingsInverse crawler. Author @qnzhou. Modifications by @fireflypulse and @rl1987. GUI by @rl1987.")
 
     def choose_dir_pressed(self):
         if self.crawling:
