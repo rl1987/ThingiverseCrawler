@@ -185,7 +185,7 @@ class CrawlerGUI():
         if not "thingiverse.com" in url:
             return False
 
-        if not "collections" in url and not "explore" in url and not "search" in url:
+        if not "collections" in url and not "explore" in url and not "search" in url and not "newest" in url:
             return False
 
         return True
@@ -217,17 +217,10 @@ class CrawlerGUI():
 
         self.crawling = True
 
-        x = 0
-
         while self.crawling:
             time.sleep(0.5)
             
-            x = (x + 1) % 4
-
-            header = "Crawling"
-
-            for _ in range(x):
-                header += "."
+            header = "Crawling ({} things crawled)".format(crawler.get_things_crawled())
 
             self.master.title(header)
             self.master.update()

@@ -126,7 +126,16 @@ def crawl_things(N, output_dir, term=None, category=None, source=None, organize=
 
     return crawl_things_internal(N, output_dir, baseurl, key, organize)
 
+things_crawled = 0
+
+def get_things_crawled():
+    return things_crawled
+
 def crawl_things_internal(N, output_dir, baseurl, key, organize=False, download_zip=False):
+    global things_crawled
+
+    things_crawled = 0
+
     thing_ids = set()
     file_ids = set()
     records = []
@@ -149,12 +158,14 @@ def crawl_things_internal(N, output_dir, baseurl, key, organize=False, download_
         for thing_id in parse_thing_ids(contents.text):
             if download_zip:
                 download_zip_file(thing_id, output_dir)
+                things_crawled += 1
                 continue
 
             if thing_id in thing_ids:
                 continue
             print(("thing id: {}".format(thing_id)))
             thing_ids.add(thing_id)
+            things_crawled += 1
             license, thing_files = get_thing(thing_id)
             for file_id in thing_files:
                 if file_id in file_ids:
@@ -230,7 +241,7 @@ def download_file(file_id, thing_id, output_dir, organize):
 
     return output_file, link
 
-def download_zip_file(thing_id, output_dir):
+def download_zip_file(thing_id, output_dir, collection_name=None, thing_name=None):
     url = "https://www.thingiverse.com/thing:{}/zip".format(thing_id)
 
     print(url)
