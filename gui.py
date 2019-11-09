@@ -230,6 +230,7 @@ class CrawlerGUI():
         self.master.update()
 
 root = tk.Tk()
+root.geometry("400x150")
 gui = CrawlerGUI(root)
 root.mainloop()
 
