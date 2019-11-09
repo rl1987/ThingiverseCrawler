@@ -141,7 +141,7 @@ class CrawlerGUI():
         self.url_entry = tk.Entry(self.left_frame)
         self.url_entry.pack()
 
-        self.url_entry_tooltip = CreateToolTip(self.url_entry, 'URL of page to scrape. Must be one of: 1) explore page (e.g. https://www.thingiverse.com/newest/), 2) search page (e.g. https://www.thingiverse.com/search?q=toy), 3) collection page (e.g. https://www.thingiverse.com/MakerTinkerSoldierSpy/collections/space-marines) without page parameter')
+        _ = CreateToolTip(self.url_entry, 'URL of page to scrape. Must be one of: 1) explore page (e.g. https://www.thingiverse.com/newest/), 2) search page (e.g. https://www.thingiverse.com/search?q=toy), 3) collection page (e.g. https://www.thingiverse.com/MakerTinkerSoldierSpy/collections/space-marines) without page parameter')
 
         self.out_dir_label = tk.Label(self.left_frame, text="Output dir:")
         self.out_dir_label.pack()
@@ -149,14 +149,20 @@ class CrawlerGUI():
         self.out_dir_entry = tk.Entry(self.left_frame)
         self.out_dir_entry.pack()
 
+        _ = CreateToolTip(self.out_dir_entry, "Directory for crawled data (must exists before scraping)")
+
         self.dir_button = tk.Button(self.left_frame, text="Choose dir...", command=self.choose_dir_pressed)
         self.dir_button.pack()
+
+        _ = CreateToolTip(self.dir_button, "Choose directory to save crawled date")
 
         self.right_frame = tk.Frame(self.master)
         self.right_frame.pack(side=tk.RIGHT)
 
         self.start_button = tk.Button(self.right_frame, text="Start", command=self.start_button_pressed)
         self.start_button.pack()
+
+        _ = CreateToolTip(self.start_button, "Start crawling ThingInverse pages")
 
         self.crawling = False
 
