@@ -7,11 +7,72 @@ from tkinter import messagebox
 import os
 import threading
 import time
+import sys
+
+# https://stackoverflow.com/questions/4266566/stardand-context-menu-in-python-tkinter-text-widget-when-mouse-right-button-is-p
+def rClicker(e):
+    ''' right click context menu for all Tk Entry and Text widgets
+    '''
+
+    try:
+        def rClick_Copy(e, apnd=0):
+            if sys.platform == "darwin":
+                e.widget.event_generate('<Command-c>')
+            else:
+                e.widget.event_generate('<Control-c>')
+
+        def rClick_Cut(e):
+            if sys.platform == "darwin":
+                e.widget.event_generate('<Command-x>')
+            else:
+                e.widget.event_generate('<Control-x>')
+
+        def rClick_Paste(e):
+            if sys.platform == "darwin":
+                e.widget.event_generate('<Command-v>')
+            else:
+                e.widget.event_generate('<Control-v>')
+
+        e.widget.focus()
+
+        nclst=[
+               (' Cut', lambda e=e: rClick_Cut(e)),
+               (' Copy', lambda e=e: rClick_Copy(e)),
+               (' Paste', lambda e=e: rClick_Paste(e)),
+               ]
+
+        rmenu = tk.Menu(None, tearoff=0, takefocus=0)
+
+        for (txt, cmd) in nclst:
+            rmenu.add_command(label=txt, command=cmd)
+
+        rmenu.tk_popup(e.x_root+40, e.y_root+10,entry="0")
+
+    except TclError:
+        print(' - rClick menu, something wrong')
+        pass
+
+    return "break"
+
+def rClickbinder(r):
+    if sys.platform == "darwin":
+        seq = '<Button-2>'
+    else:
+        seq = '<Button-3>'
+
+    try:
+        r.bind_class('Entry', sequence=seq,
+                     func=rClicker)
+    except TclError:
+        print(' - rClickbinder, something wrong')
+        pass
 
 class CrawlerGUI():
     def __init__(self, master):
         self.master = master
         master.title("ThingInverse crawler")
+
+        rClickbinder(master)
 
         self.left_frame = tk.Frame(self.master)
         self.left_frame.pack(side=tk.LEFT)
